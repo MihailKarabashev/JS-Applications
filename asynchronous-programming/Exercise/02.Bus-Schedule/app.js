@@ -1,37 +1,48 @@
 function solve() {
-  let url = `http://localhost:3030/jsonstore/bus/schedule`;
+  let infoBanner = document.querySelector(" #schedule > #info > span");
   let arriveBtn = document.querySelector("#arrive");
   let departBtn = document.querySelector("#depart");
-  let busInfo = document.querySelector("#info > span");
-  let currentStop = "";
 
-  fetch(url)
-    .then((x) => x.json())
-    .then((response) => {
-      let dataArray = Object.entries(response);
-      console.log(dataArray);
+  let nextStop = {
+    name: "Depot",
+    next: "depot",
+  };
 
-      function depart() {
-        departBtn.setAttribute("disabled", "true");
-        arriveBtn.removeAttribute("disabled");
+  async function depart() {
+    try {
+      let response = await fetch(
+        "http://localhost:3030/jsonstore/bus/schedule/" + nextStop.next
+      );
 
-        let nextStop = dataArray.pop();
-        currentStop = nextStop[1].name;
-        busInfo.textContent = `Next stop ${currentStop}`;
+      if (!response.ok) {
+        throw new Error();
       }
 
-      function arrive() {
-        arriveBtn.setAttribute("disabled", "true");
-        departBtn.removeAttribute("disabled");
+      let data = await response.json();
+      nextStop.name = data.name;
+      nextStop.next = data.next;
 
-        busInfo.textContent = `Arriving at ${currentStop}`;
-      }
+      infoBanner.textContent = `Next stop ${data.name}`;
 
-      return {
-        depart,
-        arrive,
-      };
-    });
+      departBtn.setAttribute("disabled", "true");
+      arriveBtn.removeAttribute("disabled");
+    } catch (error) {
+      infoBanner.textContent = "Error";
+      departBtn.setAttribute("disabled", "true");
+      arriveBtn.setAttribute("disabled", "true");
+    }
+  }
+
+  function arrive() {
+    arriveBtn.setAttribute("disabled", "true");
+    departBtn.removeAttribute("disabled");
+
+    infoBanner.textContent = `Arriving at ${nextStop.name}`;
+  }
+
+  return {
+    depart,
+    arrive,
+  };
 }
-
 let result = solve();
