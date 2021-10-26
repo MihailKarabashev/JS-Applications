@@ -1,14 +1,15 @@
 function lockedProfile() {
   let main = document.querySelector('main');
   main.innerHTML = '';
+
   ( async () =>  {
     let response = await fetch('http://localhost:3030/jsonstore/advanced/profiles');
     let data = await response.json();
+
     Object.values(data).forEach(profile => {
         let profileDiv = createProfile(profile.age,profile.email,profile.username,profile._id);
          main.appendChild(profileDiv);
     });
-
   })();
 
   function createProfile(age,email,username,id){
@@ -103,7 +104,7 @@ function lockedProfile() {
     let profile = e.target.parentElement;
     let hiddenDiv = e.target.previousElementSibling;
     let showMoreButton = e.target;
-    let radioButton = profile.querySelector('input[type=radio] : checked');
+    let radioButton = profile.querySelector('input[type="radio"]:checked');
 
     if (radioButton.value !== 'unlock') {
       return;
