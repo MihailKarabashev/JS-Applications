@@ -5,10 +5,9 @@ function attachEvents() {
 
 
    async function fillOptions(){
-    let data = await getData();
+    let data = await getData('http://localhost:3030/jsonstore/blog/posts');
 
     posts = [...Object.values(data)];
-    console.log(posts);
    
      let selectElement = document.querySelector('#posts');
    
@@ -32,7 +31,7 @@ function attachEvents() {
 
        let comments= document.querySelector('#post-comments');
        
-      let data = await getData();
+      let data = await getData('http://localhost:3030/jsonstore/blog/comments');
    
        Object.values(data).filter(x=> x.postId === id).forEach(currComment => {
            let comment = createComment(currComment);
@@ -40,8 +39,8 @@ function attachEvents() {
        });
    }
 
-   async function getData(){
-    let response = await fetch('http://localhost:3030/jsonstore/blog/comments');
+   async function getData(url){
+    let response = await fetch(url);
     let data = await response.json();
 
     return data;
