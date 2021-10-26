@@ -1,72 +1,126 @@
 function lockedProfile() {
-  let main = document.querySelector("main");
-  main.innerHTML = "";
-  loadData(main);
+  let main = document.querySelector('main');
+  main.innerHTML = '';
+  ( async () =>  {
+    let response = await fetch('http://localhost:3030/jsonstore/advanced/profiles');
+    let data = await response.json();
+    Object.values(data).forEach(profile => {
+        let profileDiv = createProfile(profile.age,profile.email,profile.username,profile._id);
+         main.appendChild(profileDiv);
+    });
 
-  main.addEventListener("click", (e) => {
-    if (e.target.tagName !== "BUTTON") {
+  })();
+
+  function createProfile(age,email,username,id){
+     
+    let div = document.createElement('div');
+    div.classList.add('profile');
+
+    let img = document.createElement('img');
+    img.src = "./iconProfile2.png";
+    img.classList.add("userIcon");
+    div.appendChild(img);
+
+    let labelLock = document.createElement('label');
+    labelLock.textContent = 'Lock';
+    div.appendChild(labelLock);
+
+    let inputLock = document.createElement('input');
+    inputLock.type = 'radio';
+    inputLock.name = `user${id}Locked`;
+    inputLock.value = 'lock';
+    inputLock.checked = true;
+    div.appendChild(inputLock);
+
+
+    let labelUnlock = document.createElement('label');
+    labelUnlock.textContent = 'Unlock';
+    div.appendChild(labelUnlock);
+
+    let inputUnlock = document.createElement('input');
+    inputUnlock.type = 'radio';
+    inputUnlock.name = `user${id}Locked`;
+    inputUnlock.value = 'unlock';
+    div.appendChild(inputUnlock);
+
+    let hr = document.createElement('hr');
+    div.appendChild(hr);
+
+    let labelName = document.createElement('label');
+    labelName.textContent = 'Username';
+    div.appendChild(labelName);
+
+    let inputUsername = document.createElement('input');
+    inputUsername.type = 'text';
+    inputUsername.name = `user${id}Username`;
+    inputUsername.value = username;
+    inputUsername.disabled = true;
+    inputUsername.readOnly =  true;
+    div.appendChild(inputUsername);
+    
+    let hiddenDiv = document.createElement('div');
+    hiddenDiv.id = `user${id}HiddenFields`;
+
+    let hrHiddenDiv = document.createElement('hr');
+    hiddenDiv.appendChild(hrHiddenDiv);
+
+    let emailLabel = document.createElement('label');
+    emailLabel.textContent = 'Email';
+    hiddenDiv.appendChild(emailLabel);
+
+    let inputEmail = document.createElement('input');
+    inputEmail.type = 'email';
+    inputEmail.name = `user${id}Email`;
+    inputEmail.value = email;
+    inputEmail.disabled = true;
+    inputEmail.readOnly = true;
+    hiddenDiv.appendChild(inputEmail);
+
+    let ageLabel = document.createElement('label');
+    ageLabel.textContent = 'Age';
+    hiddenDiv.appendChild(ageLabel);
+
+    let inputAge = document.createElement('input');
+    inputAge.type = 'email';
+    inputAge.name = `user${id}Age`;
+    inputAge.value = age;
+    inputAge.disabled = true;
+    inputAge.readOnly = true;
+    hiddenDiv.appendChild(inputAge);
+
+    div.appendChild(hiddenDiv);
+
+    let button = document.createElement('button');
+    button.textContent = 'Show More';
+    button.addEventListener('click', showMore);
+
+    div.appendChild(button);
+
+    return div;
+  }
+
+  function showMore(e){
+    let profile = e.target.parentElement;
+    let hiddenDiv = e.target.previousElementSibling;
+    let showMoreButton = e.target;
+    let radioButton = profile.querySelector('input[type=radio] : checked');
+
+    if (radioButton.value !== 'unlock') {
       return;
     }
-  });
+
+    showMoreButton = showMoreButton.textContent === 'Show More' 
+    ? 'Hide it'
+    : 'Show More';
+
+    hiddenDiv.style.display = hiddenDiv.style.display === 'block' ? 'none' : 'block';
+
+  }
+
 }
 
-async function loadData(main) {
-  let response = await fetch(
-    "http://localhost:3030/jsonstore/advanced/profiles"
-  );
-  let data = await response.json();
 
-  Object.values(data).map((profile) => {
-    let div = e(
-      "div",
-      { className: "profile" },
-      e("img", { src: "./iconProfile2.png", className: "userIcon" }),
-      e("label", {}, "Lock"),
-      e("input", {
-        type: "radio",
-        name: profile._id,
-        value: "lock",
-        checked: "checked",
-      }),
-      e("label", {}, "Unlock"),
-      e("input", { type: "radio", name: profile._id, value: "unlock" }),
-      e("br"),
-      e("hr"),
-      e("label", {}, "Username"),
-      e("input", {
-        type: "text",
-        name: profile.username,
-        value: profile.username,
-        disabled: "true",
-        readonly: "true",
-      }),
-      e(
-        "div",
-        { id: "user1HiddenFields" },
-        e("hr"),
-        e("label", {}, "Email"),
-        e("input", {
-          type: "email",
-          name: profile.email,
-          value: profile.email,
-          disabled: "true",
-          readonly: "true",
-        }),
-        e("label", {}, "Age"),
-        e("input", {
-          type: "email",
-          name: profile.age,
-          value: profile.age,
-          disabled: "true",
-          readonly: "true",
-        })
-      ),
-      e("button", {}, "Show More")
-    );
-
-    main.appendChild(div);
-  });
-  /*
+/*
   <div class="profile">
 				<img src="./iconProfile2.png" class="userIcon" />
 				<label>Lock</label>
@@ -86,29 +140,3 @@ async function loadData(main) {
 				<button>Show more</button>
 			</div>
             ?*/
-}
-
-function e(type, attributes, ...content) {
-  const result = document.createElement(type);
-
-  for (let [attr, value] of Object.entries(attributes || {})) {
-    if (attr.substring(0, 2) == "on") {
-      result.addEventListener(attr.substring(2).toLocaleLowerCase(), value);
-    } else {
-      result[attr] = value;
-    }
-  }
-
-  content = content.reduce((a, c) => a.concat(Array.isArray(c) ? c : [c]), []);
-
-  content.forEach((e) => {
-    if (typeof e == "string" || typeof e == "number") {
-      const node = document.createTextNode(e);
-      result.appendChild(node);
-    } else {
-      result.appendChild(e);
-    }
-  });
-
-  return result;
-}
