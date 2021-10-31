@@ -1,9 +1,52 @@
-document.querySelector('button.load').addEventListener('click', loadAllCatches);
+function solve(){
+    document.querySelector('button.load').addEventListener('click', loadAllCatches);
+    let button = document.querySelector('#addForm > .add');
+    button.disabled = sessionStorage.getItem('authToken') === null;
+
+   button.addEventListener('click', createCatch);
+
+   document.querySelector('#catches').addEventListener('click', changeData);
+}
+
+solve();
+
+async function changeData(e){
+   if (e.target.className === 'update' && sessionStorage.getItem('authToken') !== null) {
+       
+   }else if(e.target.className === 'delete' && sessionStorage.getItem('authToken') !== null){
+      
+   }
+}
+
+async function createCatch(){
+     let inputs = document.querySelectorAll('#addForm > input');
+     let obj = {
+         angler : inputs[0].value,
+         weight : Number(inputs[1].value),
+         species : inputs[2].value,
+         location : inputs[3].value,
+         bait : inputs[4].value,
+         captureTime : Number(inputs[5].value),
+     }
+
+     let token = sessionStorage.getItem('authToken');
+
+     await request('http://localhost:3030/data/catches', {
+        method: 'POST',
+        headers : {'Content-Type' : 'application/json' , 'X-Authorization' : token},
+        body : JSON.stringify(obj),
+    });
+
+    await loadAllCatches();
+
+    
+}
 
 
 async function loadAllCatches(){
    let div = document.querySelector('#catches');
-   
+   div.innerHTML = '';
+
     let data = await request('http://localhost:3030/data/catches');
 
     data.forEach(xCatch => {
@@ -80,12 +123,14 @@ function createCatchComponent(xCatch){
  let buttonUpdate = document.createElement('button');
  buttonUpdate.textContent = 'Update';
  buttonUpdate.setAttribute('disabled', true);
+ buttonUpdate.classList.add('update');
 
  divElement.appendChild(buttonUpdate);
 
  let buttonDelete = document.createElement('button');
  buttonDelete.textContent = 'Delete';
  buttonDelete.setAttribute('disabled',true);
+ buttonDelete.classList.add('delete');
 
  divElement.appendChild(buttonDelete);
 
