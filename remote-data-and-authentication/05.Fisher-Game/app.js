@@ -1,5 +1,6 @@
 function solve(){
     document.querySelector('button.load').addEventListener('click', loadAllCatches);
+
     let button = document.querySelector('#addForm > .add');
     button.disabled = sessionStorage.getItem('authToken') === null;
 
@@ -11,11 +12,45 @@ function solve(){
 solve();
 
 async function changeData(e){
+    let token = sessionStorage.getItem('authToken');
+    console.log(token);
+
    if (e.target.className === 'update' && sessionStorage.getItem('authToken') !== null) {
-       
+    let id = e.target.parentNode.getAttribute('data-id');
+    let inputs = e.target.parentNode.querySelectorAll('input');
+    let obj = {
+        angler : inputs[0].value,
+        weight : Number(inputs[1].value),
+        species : inputs[2].value,
+        location : inputs[3].value,
+        bait : inputs[4].value,
+        captureTime : Number(inputs[5].value),
+    }
+
+    await updateCatch(id,obj,token);
+    await loadAllCatches();
    }else if(e.target.className === 'delete' && sessionStorage.getItem('authToken') !== null){
-      
+       let id = e.target.parentNode.getAttribute('data-id');
+       await deleteCatch(id, token);
+       await loadAllCatches();
+    console.log(id);
    }
+}
+
+async function updateCatch(id,obj,token){
+    await request('http://localhost:3030/data/catches/' + id, {
+        method : 'PUT',
+        headers : {'Content-Type' : 'application/json', 'X-Authorization' : token},
+        body : JSON.stringify(obj)
+    });
+}
+
+async function deleteCatch(id,token){
+
+     await request('http://localhost:3030/data/catches/' + id, {
+         method : "DELETE",
+         headers: {'X-Authorization' : token},
+     });
 }
 
 async function createCatch(){
@@ -59,6 +94,7 @@ async function loadAllCatches(){
 function createCatchComponent(xCatch){
   let divElement = document.createElement('div');
   divElement.classList.add('catch');
+  divElement.setAttribute('data-id', xCatch._id);
 
   let angler = document.createElement('label');
   angler.textContent = "Angler";
@@ -120,16 +156,19 @@ function createCatchComponent(xCatch){
 
  divElement.appendChild(hrElemnet);
 
- let buttonUpdate = document.createElement('button');
- buttonUpdate.textContent = 'Update';
- buttonUpdate.setAttribute('disabled', true);
+ let buttonUpdate = document.createElement('input');
+ buttonUpdate.value = 'Update';
+ buttonUpdate.readOnly = true;
+ buttonUpdate.type = 'submit';
  buttonUpdate.classList.add('update');
 
  divElement.appendChild(buttonUpdate);
 
- let buttonDelete = document.createElement('button');
- buttonDelete.textContent = 'Delete';
- buttonDelete.setAttribute('disabled',true);
+
+ let buttonDelete = document.createElement('input');
+ buttonDelete.value = 'Delete';
+ buttonDelete.readOnly = true;
+ buttonDelete.type = 'submit';
  buttonDelete.classList.add('delete');
 
  divElement.appendChild(buttonDelete);
