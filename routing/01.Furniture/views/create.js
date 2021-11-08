@@ -22,7 +22,7 @@ let createFurnitureTemplete = (onSubmit) => html`
                     </div>
                     <div class="form-group has-danger">
                         <label class="form-control-label" for="new-year">Year</label>
-                        <input class="form-control is-invalid" id="new-year" type="number" name="year">
+                        <input class="form-control is-valid" id="new-year" type="number" name="year">
                     </div>
                     <div class="form-group">
                         <label class="form-control-label" for="new-description">Description</label>
