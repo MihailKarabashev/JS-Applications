@@ -1,13 +1,14 @@
 import {html} from 'https://unpkg.com/lit-html?module';
+import{register} from '../api/data.js';
 
-let registerTemplate = () => html`
+let registerTemplate = (onSubmit) => html`
 <div class="row space-top">
             <div class="col-md-12">
                 <h1>Register New User</h1>
                 <p>Please fill all fields.</p>
             </div>
         </div>
-        <form>
+        <form @submit=${onSubmit}>
             <div class="row space-top">
                 <div class="col-md-4">
                     <div class="form-group">
@@ -29,5 +30,23 @@ let registerTemplate = () => html`
 `; 
 
 export async function registerPage(ctx){
-    ctx.render(registerTemplate());
+    ctx.render(registerTemplate(onSubmit));
+
+    async function onSubmit(e){
+        e.preventDefault();
+    
+        let formData = new FormData(e.target);
+    
+        let email = formData.get('email');
+        let pass = formData.get("password");
+        let rePass = formData.get("rePass");
+    
+       if(email == '' || pass == '' || rePass == ""){
+         alert('Fields cannot be empty !');
+       }
+
+      await register(email,pass,rePass);
+      ctx.page.redirect('/');
+    }
 }
+

@@ -34,5 +34,6 @@ let cardTemplete = (furniture) => html`
 
 export async function dashboardPage(ctx){
     let data = await getAll();
+    ctx.setUserNavigation();
      ctx.render(templete(data));
 }

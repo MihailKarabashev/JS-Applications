@@ -31,6 +31,14 @@ export async function loginPage(ctx){
     ctx.render(loginTemplete(onSubmit));
 
     async function onSubmit(e){
+     e.preventDefault();
 
+     let formData = new FormData(e.target);
+
+     let email = formData.get("email");
+     let pass = formData.get("password");
+
+     await login(email,pass);
+     ctx.page.redirect('/');
     }
 }
