@@ -4,6 +4,10 @@ import { homePage } from "./views/home.js";
 import { logout } from "./api/data.js";
 import { loginPage } from "./views/login.js";
 import { registerPage } from "./views/register.js";
+import { detailsPage } from "./views/details.js";
+import { createPage } from "./views/create.js";
+import { editPage } from "./views/edit.js";
+import { myBooksPage } from "./views/myBooks.js";
 
 
 
@@ -18,6 +22,12 @@ page('/', customMiddleware, homePage);
 page('/index.html', customMiddleware, homePage);
 page('/login', customMiddleware, loginPage);
 page('/register', customMiddleware, registerPage);
+page('/create', customMiddleware, createPage);
+page('/details/:id', customMiddleware, detailsPage);
+page('/edit/:id', customMiddleware, editPage);
+page('/my-books', customMiddleware, myBooksPage);
+
+
 
 
 
