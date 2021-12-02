@@ -17,6 +17,6 @@ const guestUsersTemplete = () => html`
 
 export async function homePage(ctx) {
     sessionStorage.getItem('email') != null
-        ? ctx.render(guestUsersTemplete())
-        : ctx.page.redirect('/allMemes');
+        ? ctx.page.redirect('/allMemes')
+        : ctx.render(guestUsersTemplete());
 }

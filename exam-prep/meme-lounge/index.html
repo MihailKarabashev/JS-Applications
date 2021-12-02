@@ -13,14 +13,14 @@
 
         <!-- Navigation -->
         <nav>
-            <a href="#">All Memes</a>
+            <a href="/allMemes">All Memes</a>
             <!-- Logged users -->
             <div class="user">
-                <a href="#">Create Meme</a>
+                <a href="/create">Create Meme</a>
                 <div class="profile">
-                    <span>Welcome, {email}</span>
-                    <a href="#">My Profile</a>
-                    <a href="#">Logout</a>
+                    <span id='welcome-user'></span>
+                    <a href="/my-profile">My Profile</a>
+                    <a href="javascript:void(0)" id='logout-btn'>Logout</a>
                 </div>
             </div>
             <!-- Guest users -->
@@ -29,7 +29,7 @@
                     <a href="/login">Login</a>
                     <a href="/register">Register</a>
                 </div>
-                <a class="active" href="#">Home Page</a>
+                <a class="active" href="/index.html">Home Page</a>
             </div>
         </nav>
 
