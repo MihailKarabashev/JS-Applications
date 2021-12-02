@@ -1,5 +1,6 @@
 import { html } from "../../node_modules/lit-html/lit-html.js";
 import { edit, getById } from "../api/data.js";
+import { notify } from "./notification.js";
 
 
 
@@ -40,16 +41,13 @@ export async function editPage(ctx) {
             imageUrl: formData.get('imageUrl'),
         };
 
-        try {
-            if (!obj.title || !obj.description || !obj.imageUrl) {
-                throw new Error('All fields must be filled');
-            }
-
-            await edit(id, obj);
-            ctx.setUserNav();
-            ctx.page.redirect('/details/' + id);
-        } catch (error) {
-            alert(error.message);
+        if (!obj.title || !obj.description || !obj.imageUrl) {
+            return notify('All fields must be filled');
         }
+
+        await edit(id, obj);
+        ctx.setUserNav();
+        ctx.page.redirect('/details/' + id);
+
     }
 }

@@ -1,8 +1,6 @@
 import { html } from "../../node_modules/lit-html/lit-html.js";
 import { create } from "../api/data.js";
-
-
-
+import { notify } from "./notification.js";
 
 
 const createMemeTemplete = (onSubmit) => html`
@@ -37,16 +35,12 @@ export async function createPage(ctx) {
             imageUrl: formData.get('imageUrl'),
         };
 
-        try {
-            if (!obj.title || !obj.description || !obj.imageUrl) {
-                throw new Error('All fields must be filled');
-            }
-
-            await create(obj);
-            ctx.setUserNav();
-            ctx.page.redirect('/allMemes');
-        } catch (error) {
-            alert(error.message);
+        if (!obj.title || !obj.description || !obj.imageUrl) {
+            return notify('All fields must be filled');
         }
+
+        await create(obj);
+        ctx.setUserNav();
+        ctx.page.redirect('/allMemes');
     }
 }
