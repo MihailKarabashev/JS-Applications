@@ -1,5 +1,3 @@
-import { notify } from "../views/notification.js";
-
 export const settings = {
     host: "",
 };
@@ -20,7 +18,7 @@ async function request(url, options) {
             return response;
         }
     } catch (err) {
-        notify(err.message);
+        alert(err.message);
         throw err;
     }
 }
@@ -66,7 +64,6 @@ export async function login(email, password) {
         password,
     });
 
-    sessionStorage.setItem("username", result.username);
     sessionStorage.setItem("authToken", result.accessToken);
     sessionStorage.setItem("email", result.email);
     sessionStorage.setItem("userId", result._id);
@@ -74,19 +71,15 @@ export async function login(email, password) {
     return result;
 }
 
-export async function register(username, email, password, gender) {
+export async function register(email, password) {
     const result = await post(settings.host + "/users/register", {
-        username,
         email,
         password,
-        gender
     });
 
-    sessionStorage.setItem("username", result.username);
     sessionStorage.setItem("authToken", result.accessToken);
     sessionStorage.setItem("email", result.email);
     sessionStorage.setItem("userId", result._id);
-    sessionStorage.setItem("gender", result.gender);
 
 
     return result;
@@ -95,11 +88,9 @@ export async function register(username, email, password, gender) {
 export async function logout() {
     const result = await get(settings.host + "/users/logout");
 
-    sessionStorage.removeItem("username");
     sessionStorage.removeItem("email");
     sessionStorage.removeItem("authToken");
     sessionStorage.removeItem("userId");
-    sessionStorage.removeItem("gender");
 
     return result;
 }
